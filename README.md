@@ -2,6 +2,8 @@
 
 Application de tirage au sort pondéré pour les réunions BNI (Business Network International).
 
+**Créé par Thomas GALIBERT - DEMERYS INVESTMENT** ([www.demerys.com](https://www.demerys.com))
+
 ## Description
 
 Cette application permet de gérer une liste de membres et d'effectuer des tirages au sort avec une roulette interactive de style casino. La particularité de cette application est son système de pondération qui réduit les chances de gagner après chaque victoire, garantissant ainsi une distribution plus équitable des gains sur le long terme.
@@ -148,3 +150,16 @@ roulette/
 │   │   └── types/      # Types TypeScript
 │   └── package.json
 └── run.sh              # Script de démarrage
+```
+
+## Auteur
+
+**Thomas GALIBERT**  
+DEMERYS INVESTMENT  
+[www.demerys.com](https://www.demerys.com)
+
+## Licence
+
+Ce projet est distribué sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+Copyright (c) 2025 Thomas GALIBERT - DEMERYS INVESTMENT
