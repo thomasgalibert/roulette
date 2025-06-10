@@ -6,6 +6,14 @@ Application de tirage au sort pondéré pour les réunions BNI (Business Network
 
 Cette application permet de gérer une liste de membres et d'effectuer des tirages au sort avec une roulette interactive de style casino. La particularité de cette application est son système de pondération qui réduit les chances de gagner après chaque victoire, garantissant ainsi une distribution plus équitable des gains sur le long terme.
 
+## Captures d'écran
+
+### Interface de gestion des membres
+![Gestion des membres](membres.png)
+
+### Roulette interactive
+![Roulette BNI](roulette.png)
+
 ## Fonctionnalités
 
 - 📝 **Gestion des membres** : Ajouter, modifier, supprimer des membres
