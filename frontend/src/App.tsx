@@ -1,39 +1,18 @@
-import { createSignal, onMount, For, Show } from 'solid-js';
+import { createSignal, onMount, For, Show, createEffect } from 'solid-js';
 import { 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Container, 
-  Paper,
-  Button,
-  IconButton,
-  Fab,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Switch,
-  Chip,
-  Box,
-  Stack,
-  CircularProgress,
-  Divider
-} from '@suid/material';
-import AddIcon from '@suid/icons-material/Add';
-import DeleteIcon from '@suid/icons-material/Delete';
-import EditIcon from '@suid/icons-material/Edit';
-import CasinoIcon from '@suid/icons-material/Casino';
-import CheckCircleIcon from '@suid/icons-material/CheckCircle';
-import CancelIcon from '@suid/icons-material/Cancel';
-import GroupsIcon from '@suid/icons-material/Groups';
-import TrophyIcon from '@suid/icons-material/EmojiEvents';
-import RestartAltIcon from '@suid/icons-material/RestartAlt';
-import RefreshIcon from '@suid/icons-material/Refresh';
+  Plus,
+  Trash2,
+  Edit3,
+  Dices,
+  CheckCircle,
+  XCircle,
+  Users,
+  Trophy,
+  RotateCcw,
+  RefreshCcw,
+  Moon,
+  Sun
+} from 'lucide-solid';
 import { api } from './services/api';
 import type { Person, Winner } from './types/index';
 import RouletteWheel from './components/RouletteWheel';
@@ -45,6 +24,7 @@ function App() {
   const [loading, setLoading] = createSignal(false);
   const [error, setError] = createSignal('');
   const [success, setSuccess] = createSignal('');
+  const [theme, setTheme] = createSignal<'light' | 'dark'>('light');
   
   // Dialog states
   const [addDialogOpen, setAddDialogOpen] = createSignal(false);
@@ -61,9 +41,28 @@ function App() {
   const [spinResult, setSpinResult] = createSignal<Person | null>(null);
   const [isSpinning, setIsSpinning] = createSignal(false);
 
+  // Theme effect
+  createEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme());
+  });
+
   onMount(async () => {
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+    }
+    
     await loadPersons();
   });
+
+  const toggleTheme = () => {
+    const newTheme = theme() === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
 
   const loadPersons = async () => {
     try {
@@ -91,13 +90,14 @@ function App() {
     
     try {
       const newPerson = await api.createPerson(newPersonName());
-      // Add the new person to the list without reloading
       setPersons(prev => [...prev, newPerson]);
       setNewPersonName('');
       setAddDialogOpen(false);
       setSuccess('Personne ajoutée avec succès');
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError('Erreur lors de l\'ajout de la personne');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
@@ -107,15 +107,16 @@ function App() {
     
     try {
       const updatedPerson = await api.updatePerson(person.id, { name: editName() });
-      // Update only the specific person in the list
       setPersons(prev => prev.map(p => 
         p.id === person.id ? updatedPerson : p
       ));
       setEditDialogOpen(false);
       setEditingPerson(null);
       setSuccess('Personne modifiée avec succès');
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError('Erreur lors de la modification');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
@@ -124,23 +125,24 @@ function App() {
     
     try {
       await api.deletePerson(id);
-      // Remove the person from the list without reloading
       setPersons(prev => prev.filter(p => p.id !== id));
       setSuccess('Personne supprimée avec succès');
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError('Erreur lors de la suppression');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
   const handleTogglePresence = async (person: Person) => {
     try {
       const updatedPerson = await api.updatePresence(person.id, !person.present);
-      // Update only the specific person in the list without reloading everything
       setPersons(prev => prev.map(p => 
         p.id === person.id ? updatedPerson : p
       ));
     } catch (err) {
       setError('Erreur lors de la mise à jour de la présence');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
@@ -150,6 +152,7 @@ function App() {
       await loadPersons();
     } catch (err) {
       setError('Erreur lors de la mise à jour des présences');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
@@ -158,7 +161,6 @@ function App() {
       setIsSpinning(true);
       setSpinResult(null);
       
-      // Simulate spinning animation delay
       setTimeout(async () => {
         try {
           const result = await api.spinRoulette();
@@ -168,11 +170,13 @@ function App() {
         } catch (err: any) {
           setIsSpinning(false);
           setError(err.message || 'Erreur lors du tirage');
+          setTimeout(() => setError(''), 3000);
         }
-      }, 5000); // Increased to 5 seconds
+      }, 5000);
     } catch (err) {
       setIsSpinning(false);
       setError('Erreur lors du tirage');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
@@ -182,9 +186,11 @@ function App() {
     try {
       await api.resetWinCounts();
       setSuccess('Les compteurs de victoires ont été réinitialisés');
+      setTimeout(() => setSuccess(''), 3000);
       await loadPersons();
     } catch (err) {
       setError('Erreur lors de la réinitialisation');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
@@ -197,343 +203,370 @@ function App() {
         p.id === person.id ? updatedPerson : p
       ));
       setSuccess(`Les victoires de ${person.name} ont été réinitialisées`);
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError('Erreur lors de la réinitialisation');
+      setTimeout(() => setError(''), 3000);
     }
   };
 
   const presentCount = () => persons().filter(p => p.present).length;
 
   return (
-    <>
-      <AppBar position="static" sx={{ bgcolor: '#d32f2f' }}>
-        <Toolbar>
-          <CasinoIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Roulette BNI
-          </Typography>
-          <Button 
-            color="inherit" 
-            startIcon={<RestartAltIcon />}
-            onClick={handleResetWins}
-            sx={{ mr: 2 }}
-          >
-            Reset victoires
-          </Button>
-          <Button 
-            color="inherit" 
-            startIcon={<TrophyIcon />}
-            onClick={() => {
-              loadHistory();
-              setHistoryDialogOpen(true);
-            }}
-          >
-            Historique
-          </Button>
-        </Toolbar>
-      </AppBar>
+    <div class="app">
+      {/* App Bar */}
+      <header class="md-app-bar elevation-1">
+        <Dices size={24} />
+        <h1 class="md-app-bar-title">Roulette BNI</h1>
+        <button 
+          class="md-icon-button"
+          onClick={handleResetWins}
+          title="Réinitialiser toutes les victoires"
+        >
+          <RotateCcw size={20} />
+        </button>
+        <button 
+          class="md-icon-button"
+          onClick={() => {
+            loadHistory();
+            setHistoryDialogOpen(true);
+          }}
+          title="Historique"
+        >
+          <Trophy size={20} />
+        </button>
+        <button 
+          class="md-icon-button"
+          onClick={toggleTheme}
+          title="Changer le thème"
+        >
+          {theme() === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+        </button>
+      </header>
 
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Stack spacing={3}>
-          {/* Statistics */}
-          <Paper sx={{ p: 3 }}>
-            <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-              <Box>
-                <Typography variant="h6">
-                  <GroupsIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-                  Membres présents
-                </Typography>
-                <Typography variant="h3" color="primary">
+      <main class="md-container" style={{ "padding-top": "24px", "padding-bottom": "100px" }}>
+        {/* Statistics Card */}
+        <div class="md-card md-card-filled" style={{ "margin-bottom": "24px" }}>
+          <div class="md-card-content">
+            <div style={{ display: "flex", "align-items": "center", "justify-content": "space-between", "flex-wrap": "wrap", gap: "16px" }}>
+              <div>
+                <div style={{ display: "flex", "align-items": "center", gap: "12px", "margin-bottom": "8px" }}>
+                  <Users size={24} />
+                  <h2 class="headline-small">Membres présents</h2>
+                </div>
+                <p class="display-small" style={{ color: "var(--md-sys-color-primary)" }}>
                   {presentCount()} / {persons().length}
-                </Typography>
-              </Box>
-              <Stack direction="row" spacing={2}>
-                <Button 
-                  variant="contained" 
-                  color="success"
-                  startIcon={<CheckCircleIcon />}
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: "12px", "flex-wrap": "wrap" }}>
+                <button 
+                  class="md-button md-button-filled md-ripple"
                   onClick={() => handleToggleAllPresence(true)}
+                  style={{ "background-color": "var(--md-sys-color-tertiary)", color: "var(--md-sys-color-on-tertiary)" }}
                 >
+                  <CheckCircle size={18} />
                   Tous présents
-                </Button>
-                <Button 
-                  variant="contained" 
-                  color="error"
-                  startIcon={<CancelIcon />}
+                </button>
+                <button 
+                  class="md-button md-button-outlined md-ripple"
                   onClick={() => handleToggleAllPresence(false)}
                 >
+                  <XCircle size={18} />
                   Tous absents
-                </Button>
-              </Stack>
-            </Stack>
-          </Paper>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          {/* Members list */}
-          <Paper sx={{ p: 3 }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-              <Typography variant="h5">Membres</Typography>
-              <Button 
-                variant="contained" 
-                startIcon={<AddIcon />}
+        {/* Members List Card */}
+        <div class="md-card md-card-elevated">
+          <div class="md-card-content">
+            <div style={{ display: "flex", "justify-content": "space-between", "align-items": "center", "margin-bottom": "16px" }}>
+              <h2 class="headline-medium">Membres</h2>
+              <button 
+                class="md-button md-button-filled md-ripple"
                 onClick={() => setAddDialogOpen(true)}
               >
+                <Plus size={18} />
                 Ajouter
-              </Button>
-            </Stack>
+              </button>
+            </div>
 
             <Show when={loading()} fallback={
-              <List>
+              <ul class="md-list">
                 <For each={persons()}>
                   {(person) => (
-                    <ListItem divider>
-                      <ListItemText 
-                        primary={person.name}
-                        secondary={
-                          <Stack direction="row" spacing={1} mt={1}>
-                            <Chip 
-                              label={person.present ? 'Présent' : 'Absent'}
-                              color={person.present ? 'success' : 'default'}
-                              size="small"
+                    <>
+                      <li class="md-list-item">
+                        <div class="md-list-item-text">
+                          <div class="md-list-item-primary">{person.name}</div>
+                          <div class="md-list-item-secondary">
+                            <div style={{ display: "flex", gap: "8px", "margin-top": "4px" }}>
+                              <span class={`md-chip ${person.present ? 'md-chip-filter selected' : 'md-chip-assist'}`}>
+                                {person.present ? 'Présent' : 'Absent'}
+                              </span>
+                              {person.win_count > 0 && (
+                                <span class="md-chip md-chip-suggestion">
+                                  {person.win_count} victoire{person.win_count > 1 ? 's' : ''}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", "align-items": "center", gap: "4px" }}>
+                          <label class="md-switch">
+                            <input 
+                              type="checkbox"
+                              checked={person.present}
+                              onChange={() => handleTogglePresence(person)}
                             />
-                            {person.win_count > 0 && (
-                              <Chip 
-                                label={`${person.win_count} victoire${person.win_count > 1 ? 's' : ''}`}
-                                color="primary"
-                                size="small"
-                              />
-                            )}
-                          </Stack>
-                        }
-                      />
-                      <ListItemSecondaryAction>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <Switch 
-                            checked={person.present}
-                            onChange={() => handleTogglePresence(person)}
-                            color="primary"
-                          />
-                          <IconButton 
-                            size="small"
+                            <span class="md-switch-slider"></span>
+                          </label>
+                          <button 
+                            class="md-icon-button"
                             onClick={() => {
                               setEditingPerson(person);
                               setEditName(person.name);
                               setEditDialogOpen(true);
                             }}
+                            title="Modifier"
                           >
-                            <EditIcon />
-                          </IconButton>
+                            <Edit3 size={18} />
+                          </button>
                           {person.win_count > 0 && (
-                            <IconButton 
-                              size="small"
-                              color="warning"
-                              title="Réinitialiser les victoires"
+                            <button 
+                              class="md-icon-button"
                               onClick={() => handleResetPersonWins(person)}
+                              title="Réinitialiser les victoires"
+                              style={{ color: "var(--md-sys-color-tertiary)" }}
                             >
-                              <RefreshIcon />
-                            </IconButton>
+                              <RefreshCcw size={18} />
+                            </button>
                           )}
-                          <IconButton 
-                            size="small"
-                            color="error"
+                          <button 
+                            class="md-icon-button"
                             onClick={() => handleDeletePerson(person.id)}
+                            title="Supprimer"
+                            style={{ color: "var(--md-sys-color-error)" }}
                           >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Stack>
-                      </ListItemSecondaryAction>
-                    </ListItem>
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </li>
+                      <div class="md-divider"></div>
+                    </>
                   )}
                 </For>
-              </List>
+              </ul>
             }>
-              <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-                <CircularProgress />
-              </Box>
+              <div style={{ display: "flex", "justify-content": "center", padding: "48px" }}>
+                <div class="md-progress-circular">
+                  <svg viewBox="0 0 48 48">
+                    <circle cx="24" cy="24" r="20" fill="none" stroke-width="4" />
+                  </svg>
+                </div>
+              </div>
             </Show>
-          </Paper>
-        </Stack>
+          </div>
+        </div>
 
-        {/* Floating action button */}
-        <Fab 
-          color="primary" 
-          size="large"
-          sx={{ 
-            position: 'fixed', 
-            bottom: 32, 
-            right: 32,
-            bgcolor: '#d32f2f',
-            '&:hover': { bgcolor: '#b71c1c' }
+        {/* Floating Action Button */}
+        <button 
+          class="md-fab md-fab-large"
+          style={{ 
+            position: "fixed", 
+            bottom: "24px", 
+            right: "24px",
+            "background-color": "var(--md-sys-color-primary)",
+            color: "var(--md-sys-color-on-primary)"
           }}
           onClick={() => setRouletteDialogOpen(true)}
           disabled={presentCount() === 0}
         >
-          <CasinoIcon />
-        </Fab>
-      </Container>
+          <Dices size={36} />
+        </button>
+      </main>
 
-      {/* Add person dialog */}
-      <Dialog open={addDialogOpen()} onClose={() => setAddDialogOpen(false)}>
-        <DialogTitle>Ajouter un membre</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Nom"
-            fullWidth
-            variant="outlined"
-            value={newPersonName()}
-            onChange={(e, value) => setNewPersonName(value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleAddPerson()}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setAddDialogOpen(false)}>Annuler</Button>
-          <Button onClick={handleAddPerson} variant="contained">Ajouter</Button>
-        </DialogActions>
-      </Dialog>
+      {/* Add Person Dialog */}
+      <div class={`md-dialog ${addDialogOpen() ? 'open' : ''}`} onClick={(e) => {
+        if (e.target === e.currentTarget) setAddDialogOpen(false);
+      }}>
+        <div class="md-dialog-content">
+          <h2 class="md-dialog-title">Ajouter un membre</h2>
+          <div class="md-text-field" style={{ "margin-top": "24px" }}>
+            <input
+              type="text"
+              class="md-text-field-input"
+              value={newPersonName()}
+              onInput={(e) => setNewPersonName(e.currentTarget.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleAddPerson()}
+              placeholder=" "
+              id="add-name"
+            />
+            <label for="add-name" class="md-text-field-label">Nom</label>
+          </div>
+          <div class="md-dialog-actions">
+            <button class="md-button md-button-text md-ripple" onClick={() => setAddDialogOpen(false)}>
+              Annuler
+            </button>
+            <button class="md-button md-button-filled md-ripple" onClick={handleAddPerson}>
+              Ajouter
+            </button>
+          </div>
+        </div>
+      </div>
 
-      {/* Edit person dialog */}
-      <Dialog open={editDialogOpen()} onClose={() => setEditDialogOpen(false)}>
-        <DialogTitle>Modifier le membre</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Nom"
-            fullWidth
-            variant="outlined"
-            value={editName()}
-            onChange={(e, value) => setEditName(value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleEditPerson()}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)}>Annuler</Button>
-          <Button onClick={handleEditPerson} variant="contained">Modifier</Button>
-        </DialogActions>
-      </Dialog>
+      {/* Edit Person Dialog */}
+      <div class={`md-dialog ${editDialogOpen() ? 'open' : ''}`} onClick={(e) => {
+        if (e.target === e.currentTarget) setEditDialogOpen(false);
+      }}>
+        <div class="md-dialog-content">
+          <h2 class="md-dialog-title">Modifier le membre</h2>
+          <div class="md-text-field" style={{ "margin-top": "24px" }}>
+            <input
+              type="text"
+              class="md-text-field-input"
+              value={editName()}
+              onInput={(e) => setEditName(e.currentTarget.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleEditPerson()}
+              placeholder=" "
+              id="edit-name"
+            />
+            <label for="edit-name" class="md-text-field-label">Nom</label>
+          </div>
+          <div class="md-dialog-actions">
+            <button class="md-button md-button-text md-ripple" onClick={() => setEditDialogOpen(false)}>
+              Annuler
+            </button>
+            <button class="md-button md-button-filled md-ripple" onClick={handleEditPerson}>
+              Modifier
+            </button>
+          </div>
+        </div>
+      </div>
 
-      {/* Roulette dialog */}
-      <Dialog 
-        open={rouletteDialogOpen()} 
-        onClose={() => !isSpinning() && setRouletteDialogOpen(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>
-          <Typography variant="h4" textAlign="center">
-            Roulette BNI
-          </Typography>
-        </DialogTitle>
-        <DialogContent>
+      {/* Roulette Dialog */}
+      <div class={`md-dialog ${rouletteDialogOpen() ? 'open' : ''}`} onClick={(e) => {
+        if (e.target === e.currentTarget && !isSpinning()) setRouletteDialogOpen(false);
+      }}>
+        <div class="md-dialog-content" style={{ "max-width": "800px" }}>
+          <h2 class="md-dialog-title headline-large" style={{ "text-align": "center" }}>Roulette BNI</h2>
           <RouletteWheel 
             persons={persons().filter(p => p.present)}
             isSpinning={isSpinning()}
             winner={spinResult()}
           />
-        </DialogContent>
-        <DialogActions>
-          <Button 
-            onClick={() => {
-              setRouletteDialogOpen(false);
-              setSpinResult(null);
-              setIsSpinning(false); // Ensure spinning is stopped
-            }}
-            disabled={isSpinning()}
-          >
-            Fermer
-          </Button>
-          <Button 
-            onClick={handleSpinRoulette}
-            variant="contained"
-            disabled={isSpinning()}
-            sx={{ 
-              bgcolor: '#d32f2f',
-              '&:hover': { bgcolor: '#b71c1c' }
-            }}
-          >
-            {isSpinning() ? 'Tirage en cours...' : 'Lancer la roulette'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <div class="md-dialog-actions">
+            <button 
+              class="md-button md-button-text md-ripple" 
+              onClick={() => {
+                setRouletteDialogOpen(false);
+                setSpinResult(null);
+                setIsSpinning(false);
+              }}
+              disabled={isSpinning()}
+            >
+              Fermer
+            </button>
+            <button 
+              class="md-button md-button-filled md-ripple"
+              onClick={handleSpinRoulette}
+              disabled={isSpinning()}
+            >
+              {isSpinning() ? 'Tirage en cours...' : 'Lancer la roulette'}
+            </button>
+          </div>
+        </div>
+      </div>
 
-      {/* History dialog */}
-      <Dialog 
-        open={historyDialogOpen()} 
-        onClose={() => setHistoryDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Historique des tirages</DialogTitle>
-        <DialogContent>
-          <List>
+      {/* History Dialog */}
+      <div class={`md-dialog ${historyDialogOpen() ? 'open' : ''}`} onClick={(e) => {
+        if (e.target === e.currentTarget) setHistoryDialogOpen(false);
+      }}>
+        <div class="md-dialog-content">
+          <h2 class="md-dialog-title">Historique des tirages</h2>
+          <ul class="md-list" style={{ "margin-top": "16px" }}>
             <For each={winners()}>
               {(winner) => (
                 <>
-                  <ListItem>
-                    <ListItemText
-                      primary={winner.person.name}
-                      secondary={new Date(winner.won_at).toLocaleString('fr-FR')}
-                    />
-                  </ListItem>
-                  <Divider />
+                  <li class="md-list-item">
+                    <div class="md-list-item-text">
+                      <div class="md-list-item-primary">{winner.person.name}</div>
+                      <div class="md-list-item-secondary">
+                        {new Date(winner.won_at).toLocaleString('fr-FR')}
+                      </div>
+                    </div>
+                  </li>
+                  <div class="md-divider"></div>
                 </>
               )}
             </For>
-          </List>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setHistoryDialogOpen(false)}>Fermer</Button>
-        </DialogActions>
-      </Dialog>
+          </ul>
+          <div class="md-dialog-actions">
+            <button class="md-button md-button-text md-ripple" onClick={() => setHistoryDialogOpen(false)}>
+              Fermer
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Notifications */}
       <Show when={error()}>
-        <Paper 
-          sx={{ 
-            position: 'fixed', 
-            bottom: 20, 
-            left: 20, 
-            p: 2, 
-            bgcolor: '#f44336',
-            color: 'white',
-            zIndex: 1000
+        <div 
+          class="md-card"
+          style={{ 
+            position: "fixed", 
+            bottom: "20px", 
+            left: "20px", 
+            "max-width": "300px",
+            "background-color": "var(--md-sys-color-error-container)",
+            color: "var(--md-sys-color-on-error-container)",
+            "z-index": "1000",
+            animation: "slideIn 0.3s ease-out"
           }}
         >
-          <Typography>{error()}</Typography>
-          <Button 
-            size="small" 
-            sx={{ color: 'white', mt: 1 }} 
-            onClick={() => setError('')}
-          >
-            Fermer
-          </Button>
-        </Paper>
+          <div class="md-card-content" style={{ display: "flex", "align-items": "center", gap: "12px" }}>
+            <XCircle size={20} />
+            <p class="body-medium">{error()}</p>
+          </div>
+        </div>
       </Show>
 
       <Show when={success()}>
-        <Paper 
-          sx={{ 
-            position: 'fixed', 
-            bottom: 20, 
-            left: 20, 
-            p: 2, 
-            bgcolor: '#4caf50',
-            color: 'white',
-            zIndex: 1000
+        <div 
+          class="md-card"
+          style={{ 
+            position: "fixed", 
+            bottom: "20px", 
+            left: "20px", 
+            "max-width": "300px",
+            "background-color": "var(--md-sys-color-tertiary-container)",
+            color: "var(--md-sys-color-on-tertiary-container)",
+            "z-index": "1000",
+            animation: "slideIn 0.3s ease-out"
           }}
         >
-          <Typography>{success()}</Typography>
-          <Button 
-            size="small" 
-            sx={{ color: 'white', mt: 1 }} 
-            onClick={() => setSuccess('')}
-          >
-            Fermer
-          </Button>
-        </Paper>
+          <div class="md-card-content" style={{ display: "flex", "align-items": "center", gap: "12px" }}>
+            <CheckCircle size={20} />
+            <p class="body-medium">{success()}</p>
+          </div>
+        </div>
       </Show>
-    </>
+
+      <style>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
   );
 }
 

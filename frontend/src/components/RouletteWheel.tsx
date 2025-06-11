@@ -1,5 +1,4 @@
 import { createEffect, createSignal, For, Show } from 'solid-js';
-import { Box, Typography, Paper } from '@suid/material';
 import type { Person } from '../types/index';
 import './RouletteWheel.css';
 
@@ -52,14 +51,34 @@ function RouletteWheel(props: RouletteWheelProps) {
 
   const segmentAngle = () => 360 / props.persons.length;
 
+  // Generate colors based on Material Design 3 palette
+  const getSegmentColor = (index: number, isWinner: boolean) => {
+    if (isWinner) {
+      return 'var(--md-sys-color-tertiary)';
+    }
+    // Alternate between primary and secondary container colors
+    return index % 2 === 0 
+      ? 'var(--md-sys-color-primary)' 
+      : 'var(--md-sys-color-primary-container)';
+  };
+
+  const getTextColor = (index: number, isWinner: boolean) => {
+    if (isWinner) {
+      return 'var(--md-sys-color-on-tertiary)';
+    }
+    return index % 2 === 0 
+      ? 'var(--md-sys-color-on-primary)' 
+      : 'var(--md-sys-color-on-primary-container)';
+  };
+
   return (
-    <Box sx={{ 
+    <div style={{ 
       display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      p: 3 
+      'flex-direction': 'column', 
+      'align-items': 'center', 
+      padding: '24px' 
     }}>
-      <Box sx={{ position: 'relative', width: 400, height: 400 }}>
+      <div style={{ position: 'relative', width: '400px', height: '400px' }}>
         {/* Roulette wheel */}
         <svg
           width="400"
@@ -99,19 +118,26 @@ function RouletteWheel(props: RouletteWheelProps) {
                 <g>
                   <path
                     d={pathData}
-                    fill={isWinner ? '#4caf50' : (index() % 2 === 0 ? '#d32f2f' : '#f44336')}
-                    stroke="white"
+                    fill={getSegmentColor(index(), isWinner)}
+                    stroke="var(--md-sys-color-surface)"
                     stroke-width="2"
+                    style={{
+                      transition: 'fill 0.3s ease'
+                    }}
                   />
                   <text
                     x={textX}
                     y={textY}
-                    fill="white"
+                    fill={getTextColor(index(), isWinner)}
                     font-size="14"
-                    font-weight="bold"
+                    font-weight="500"
                     text-anchor="middle"
                     dominant-baseline="middle"
                     transform={`rotate(${textAngle}, ${textX}, ${textY})`}
+                    style={{
+                      'font-family': 'var(--md-sys-typescale-font-family-plain)',
+                      transition: 'fill 0.3s ease'
+                    }}
                   >
                     {person.name.split(' ')[0]}
                   </text>
@@ -122,67 +148,70 @@ function RouletteWheel(props: RouletteWheelProps) {
         </svg>
 
         {/* Center circle */}
-        <Box
-          sx={{
+        <div
+          style={{
             position: 'absolute',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 80,
-            height: 80,
-            borderRadius: '50%',
-            bgcolor: 'white',
-            boxShadow: '0 0 10px rgba(0,0,0,0.3)',
+            width: '80px',
+            height: '80px',
+            'border-radius': '50%',
+            'background-color': 'var(--md-sys-color-surface)',
+            'box-shadow': 'var(--md-sys-elevation-3)',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10,
+            'align-items': 'center',
+            'justify-content': 'center',
+            'z-index': '10',
           }}
         >
-          <Typography variant="h6" color="primary">
+          <span class="title-medium" style={{ color: 'var(--md-sys-color-primary)' }}>
             BNI
-          </Typography>
-        </Box>
+          </span>
+        </div>
 
         {/* Pointer */}
-        <Box
-          sx={{
+        <div
+          style={{
             position: 'absolute',
-            top: -20,
+            top: '-20px',
             left: '50%',
             transform: 'translateX(-50%)',
-            width: 0,
-            height: 0,
-            borderLeft: '20px solid transparent',
-            borderRight: '20px solid transparent',
-            borderTop: '40px solid #333',
-            zIndex: 20,
+            width: '0',
+            height: '0',
+            'border-left': '20px solid transparent',
+            'border-right': '20px solid transparent',
+            'border-top': '40px solid var(--md-sys-color-primary)',
+            'z-index': '20',
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
           }}
         />
-      </Box>
+      </div>
 
       {/* Winner display */}
       <Show when={!props.isSpinning && props.winner}>
-        <Paper 
-          elevation={3}
-          sx={{ 
-            mt: 4, 
-            p: 3, 
-            textAlign: 'center',
-            bgcolor: '#4caf50',
-            color: 'white',
+        <div 
+          class="md-card"
+          style={{ 
+            'margin-top': '32px',
+            'text-align': 'center',
+            'background-color': 'var(--md-sys-color-tertiary-container)',
+            color: 'var(--md-sys-color-on-tertiary-container)',
             animation: 'pulse 1s infinite',
+            'min-width': '300px',
           }}
         >
-          <Typography variant="h4" gutterBottom>
-            Félicitations !
-          </Typography>
-          <Typography variant="h3">
-            {props.winner?.name}
-          </Typography>
-        </Paper>
+          <div class="md-card-content" style={{ padding: '24px' }}>
+            <h3 class="headline-medium" style={{ 'margin-bottom': '8px' }}>
+              Félicitations !
+            </h3>
+            <p class="display-small">
+              {props.winner?.name}
+            </p>
+          </div>
+        </div>
       </Show>
-    </Box>
+    </div>
   );
 }
 

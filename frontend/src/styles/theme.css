@@ -1,0 +1,155 @@
+/* Material Design 3 Color System */
+:root {
+  /* Primary colors - Red theme for BNI Roulette */
+  --md-sys-color-primary: #BA1A1A;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #FFDAD6;
+  --md-sys-color-on-primary-container: #410002;
+  
+  /* Secondary colors */
+  --md-sys-color-secondary: #775652;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #FFDAD6;
+  --md-sys-color-on-secondary-container: #2C1512;
+  
+  /* Tertiary colors */
+  --md-sys-color-tertiary: #725B2E;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #FFDEA6;
+  --md-sys-color-on-tertiary-container: #271900;
+  
+  /* Error colors */
+  --md-sys-color-error: #BA1A1A;
+  --md-sys-color-on-error: #FFFFFF;
+  --md-sys-color-error-container: #FFDAD6;
+  --md-sys-color-on-error-container: #410002;
+  
+  /* Background colors */
+  --md-sys-color-background: #FFFBFF;
+  --md-sys-color-on-background: #201A19;
+  
+  /* Surface colors with elevation tints */
+  --md-sys-color-surface: #FFFBFF;
+  --md-sys-color-on-surface: #201A19;
+  --md-sys-color-surface-variant: #F4DDDB;
+  --md-sys-color-on-surface-variant: #524342;
+  
+  /* Surface container colors (elevation levels) */
+  --md-sys-color-surface-container-lowest: #FFFFFF;
+  --md-sys-color-surface-container-low: #FEF1F0;
+  --md-sys-color-surface-container: #F8E6E5;
+  --md-sys-color-surface-container-high: #F3E0DF;
+  --md-sys-color-surface-container-highest: #EDDAD9;
+  
+  /* Outline colors */
+  --md-sys-color-outline: #857371;
+  --md-sys-color-outline-variant: #D7C1C0;
+  
+  /* Additional system colors */
+  --md-sys-color-surface-bright: #FFFBFF;
+  --md-sys-color-surface-dim: #E4D7D6;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-inverse-surface: #362F2E;
+  --md-sys-color-inverse-on-surface: #FBEEEC;
+  --md-sys-color-inverse-primary: #FFB3AB;
+  
+  /* Shape radius tokens */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+  
+  /* Elevation shadows (simplified for web) */
+  --md-sys-elevation-0: none;
+  --md-sys-elevation-1: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-2: 0px 1px 2px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-3: 0px 1px 3px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-4: 0px 2px 3px rgba(0, 0, 0, 0.3), 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-5: 0px 4px 4px rgba(0, 0, 0, 0.3), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  
+  /* Motion tokens */
+  --md-sys-motion-duration-short1: 50ms;
+  --md-sys-motion-duration-short2: 100ms;
+  --md-sys-motion-duration-short3: 150ms;
+  --md-sys-motion-duration-short4: 200ms;
+  --md-sys-motion-duration-medium1: 250ms;
+  --md-sys-motion-duration-medium2: 300ms;
+  --md-sys-motion-duration-medium3: 350ms;
+  --md-sys-motion-duration-medium4: 400ms;
+  --md-sys-motion-duration-long1: 450ms;
+  --md-sys-motion-duration-long2: 500ms;
+  --md-sys-motion-duration-long3: 550ms;
+  --md-sys-motion-duration-long4: 600ms;
+  
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --md-sys-color-primary: #FFB3AB;
+  --md-sys-color-on-primary: #680008;
+  --md-sys-color-primary-container: #930011;
+  --md-sys-color-on-primary-container: #FFDAD6;
+  
+  --md-sys-color-secondary: #E6BDBA;
+  --md-sys-color-on-secondary: #442926;
+  --md-sys-color-secondary-container: #5D3F3C;
+  --md-sys-color-on-secondary-container: #FFDAD6;
+  
+  --md-sys-color-tertiary: #E0C38C;
+  --md-sys-color-on-tertiary: #3F2E04;
+  --md-sys-color-tertiary-container: #584419;
+  --md-sys-color-on-tertiary-container: #FFDEA6;
+  
+  --md-sys-color-error: #FFB4AB;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000A;
+  --md-sys-color-on-error-container: #FFDAD6;
+  
+  --md-sys-color-background: #201A19;
+  --md-sys-color-on-background: #ECE0DE;
+  
+  --md-sys-color-surface: #201A19;
+  --md-sys-color-on-surface: #ECE0DE;
+  --md-sys-color-surface-variant: #524342;
+  --md-sys-color-on-surface-variant: #D7C1C0;
+  
+  --md-sys-color-surface-container-lowest: #150E0D;
+  --md-sys-color-surface-container-low: #201A19;
+  --md-sys-color-surface-container: #251E1D;
+  --md-sys-color-surface-container-high: #2F2827;
+  --md-sys-color-surface-container-highest: #3A3332;
+  
+  --md-sys-color-outline: #9F8C8A;
+  --md-sys-color-outline-variant: #524342;
+  
+  --md-sys-color-surface-bright: #423A39;
+  --md-sys-color-surface-dim: #201A19;
+  --md-sys-color-inverse-surface: #ECE0DE;
+  --md-sys-color-inverse-on-surface: #362F2E;
+  --md-sys-color-inverse-primary: #BA1A1A;
+}
+
+/* Elevation overlay colors for dark theme */
+[data-theme="dark"] .elevation-1 {
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+[data-theme="dark"] .elevation-2 {
+  background-color: var(--md-sys-color-surface-container);
+}
+
+[data-theme="dark"] .elevation-3 {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+[data-theme="dark"] .elevation-4,
+[data-theme="dark"] .elevation-5 {
+  background-color: var(--md-sys-color-surface-container-highest);
+}
