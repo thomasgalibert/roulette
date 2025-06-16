@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Check if reset-db argument is provided
+if [ "$1" = "reset-db" ]; then
+    echo "Resetting database..."
+    cd backend && ./reset-db.sh
+    exit $?
+fi
+
 # Start backend
 echo "Starting Gin backend on :8080..."
 cd backend && go run main.go &
